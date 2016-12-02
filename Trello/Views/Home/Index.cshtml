@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+
+
+
+<form action="/home/postcard" method="POST">
+     <input id="cardTitle" type="text" name="Title" /><br />
+     <input onclick="addCard()" id="cardButton" type="submit" value="Add Card" />
+</form>
+
+
+
+<div id="cardContainer">
+    
+        
+   
+
+
+
+</div>
+
+
+<input id="textField" type="text" name="newTab"/>
+<input onclick="addTab()" id="tabButton" type="submit" value="SAVE ME" />
+
+@section scripts{
+    @*//anything put here shows up at bottom of page*@
+
+    <script>
+        //console.log("hi");
+
+     
+        //Takes in an object in JS
+        //function getCards() {
+        //    $.ajax({
+        //        url: "/card", //go to this page (which is actually a controller)
+        //        type: "GET", //get whatever you want
+        //        success: setCardDiv  //run this function, and send back whatever you got from this page
+        //        //if you put
+        //        //success: setCardDiv(), it will return the result of the function
+
+        //    });
+        //}
+        
+
+        $('#cardContainer').sortable({
+            //also takes an object inside of it, but instead of success like ajax, it takes update
+            update: function () {
+                var data = { Blub: $(this).sortable("toArray") };
+                $.ajax({
+                    url: "/card/updateorder",
+                    type: "POST",
+                    data: data,
+                    success: function () { },
+                    error: function () { }
+                });
+
+            }
+
+        });
+
+
+
+
+        $(document).ready(function () {
+            //when the page loads
+            //append as many divs as needed based on data in database
+
+
+                @foreach (Trello.Models.Card card in Model)
+                {
+                               
+                    @:$('#cardContainer').append('<div class="card" id="' + @card.ID + '">' + '@card.Title' + '</div>');
+
+                }
+            
+        });
+
+        function addTab() {
+            var text = $('#textField').val();
+            $("#card1").append('<p class="tab">' + text + '</p>');
+            $('#textField').val('')
+
+        }
+        
+        $("#textField").keyup(function (event) {
+            if (event.keyCode == 13) {
+                $("#tabButton").click();
+            }
+        });
+
+        function addCard() {
+            var title = $('#cardTitle').val();
+            $("#cardContainer").append('<div class="card">' + title + '</div>');
+           
+        }
+
+    </script>
+
+    }
